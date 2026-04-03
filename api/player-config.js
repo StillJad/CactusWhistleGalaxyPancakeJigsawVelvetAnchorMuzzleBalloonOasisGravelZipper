@@ -1,3 +1,5 @@
+import { kv } from "@vercel/kv";
+
 function getApiKey(request) {
   return request.headers.get("x-api-key");
 }
@@ -21,10 +23,13 @@ export async function GET(request) {
     return Response.json({ error: "missing username" }, { status: 400 });
   }
 
-  const whitelist = ["Jad", "Mathrew", "dad"];
+  let users = await kv.get("whitelist");
+  if (!Array.isArray(users)) {
+    users = [];
+  }
 
-  const allowed = whitelist.some(
-    name => name.toLowerCase() === username.toLowerCase()
+  const allowed = users.some(
+    name => typeof name === "string" && name.toLowerCase() === username.toLowerCase()
   );
 
   if (!allowed) {
