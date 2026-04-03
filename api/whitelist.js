@@ -1,37 +1,13 @@
-function getApiKey(request) {
-  return request.headers.get("x-api-key");
-}
+import { kv } from "@vercel/kv";
 
-function unauthorized() {
-  return Response.json({ error: "unauthorized" }, { status: 401 });
-}
+export async function GET(request) {
+  const apiKey = request.headers.get("x-api-key");
 
-export function GET(request) {
-  const apiKey = process.env.API_SHARED_SECRET;
-  const sentKey = getApiKey(request);
-
-  if (!apiKey || sentKey !== apiKey) {
-    return unauthorized();
+  if (apiKey !== process.env.API_SHARED_SECRET) {
+    return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  let parsed;
-  try {
-    parsed = JSON.parse(process.env.WHITELIST_JSON || '{"users":[]}');
-  } catch {
-    return Response.json(
-      { error: "invalid WHITELIST_JSON env var" },
-      { status: 500 }
-    );
-  }
+  const users = await kv.get("whitelist") || [];
 
-  if (!parsed || !Array.isArray(parsed.users)) {
-    return Response.json(
-      { error: "WHITELIST_JSON must be an object with a users array" },
-      { status: 500 }
-    );
-  }
-
-  return Response.json({
-    users: parsed.users
-  });
+  return Response.json({ users });
 }
