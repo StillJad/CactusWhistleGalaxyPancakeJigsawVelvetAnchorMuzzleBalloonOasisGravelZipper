@@ -7,7 +7,7 @@ function unauthorized() {
 }
 
 export async function POST(request) {
-  const apiKey = process.env.API_SHARED_SECRET;
+  const apiKey = process.env.ROBLOX_API_KEY;
   const sentKey = getApiKey(request);
 
   if (!apiKey || sentKey !== apiKey) {
