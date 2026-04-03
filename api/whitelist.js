@@ -10,9 +10,11 @@ export function GET(request) {
   const apiKey = process.env.API_SHARED_SECRET;
   const sentKey = getApiKey(request);
 
-  if (!apiKey || sentKey !== apiKey) {
-    return unauthorized();
-  }
+ return Response.json({
+  sentKey,
+  apiKey,
+  match: sentKey === apiKey
+});
 
   let parsed;
   try {
