@@ -41,6 +41,6 @@ export async function GET(request) {
   return Response.json({
     allowed: true,
     tail: "694",
-    func: "Relamp"
+    func: "xev0rin"
   });
 }
