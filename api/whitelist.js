@@ -3,7 +3,7 @@ import { kv } from "@vercel/kv";
 export async function GET(request) {
   const apiKey = request.headers.get("x-api-key");
 
-  if (apiKey !== process.env.API_SHARED_SECRET) {
+  if (apiKey !== process.env.ROBLOX_API_KEY) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
